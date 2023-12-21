@@ -2,7 +2,7 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2023-12-21 20:02:41
+ * @LastEditTime: 2023-12-21 20:06:22
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
@@ -18,7 +18,7 @@ interface BlockState {
 
 const WIDTH = 10
 const HEIGHT = 10
-const state = reactive(
+const state = ref(
   Array.from({ length: HEIGHT }, (_, y) =>
     Array.from({ length: WIDTH }, (_, x): BlockState => ({
       x,
@@ -51,7 +51,7 @@ const numberColors = [
 ]
 
 function generateMines(initial: BlockState) {
-  for (const row of state) {
+  for (const row of state.value) {
     for (const block of row) {
       if (Math.abs(initial.x - block.x) <= 1)
         continue
@@ -64,7 +64,7 @@ function generateMines(initial: BlockState) {
 }
 
 function updateNumbers() {
-  state.forEach((row) => {
+  state.value.forEach((row) => {
     row.forEach((block) => {
       if (block.mine)
         return
@@ -88,7 +88,7 @@ function expendZero(block: BlockState) {
 }
 
 function expendAll() {
-  state.flat().forEach(block => block.revealed = true)
+  state.value.flat().forEach(block => block.revealed = true)
 }
 
 function getSiblings(block: BlockState) {
@@ -97,7 +97,7 @@ function getSiblings(block: BlockState) {
     const y2 = block.y + y
     if (x2 < 0 || x2 >= WIDTH || y2 < 0 || y2 >= HEIGHT)
       return undefined
-    return state[y2][x2]
+    return state.value[y2][x2]
   }).filter(Boolean) as BlockState[]
 }
 
@@ -136,7 +136,7 @@ function onRightClick(block: BlockState) {
 watchEffect(checkGameState)
 
 function checkGameState() {
-  const blocks = state.flat()
+  const blocks = state.value.flat()
   if (blocks.every(block => block.revealed || block.flagged)) {
     if (blocks.some(block => (!block.mine && block.flagged) || (block.mine && block.revealed)))
       alert('输了')
