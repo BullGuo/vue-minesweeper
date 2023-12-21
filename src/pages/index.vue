@@ -2,7 +2,7 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2023-12-19 23:26:10
+ * @LastEditTime: 2023-12-21 20:02:41
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
@@ -88,10 +88,7 @@ function expendZero(block: BlockState) {
 }
 
 function expendAll() {
-  for (const row of state) {
-    for (const block of row)
-      block.revealed = true
-  }
+  state.flat().forEach(block => block.revealed = true)
 }
 
 function getSiblings(block: BlockState) {
@@ -107,6 +104,14 @@ function getSiblings(block: BlockState) {
 const dev = false
 let mineGenerated = false
 
+function getBlockClass(block: BlockState) {
+  if (block.flagged)
+    return 'bg-gray-500/10'
+  if (!block.revealed)
+    return 'bg-gray-500/10 hover:bg-gray/20'
+  return block.mine ? 'bg-red-500/50' : numberColors[block.adjacentMines]
+}
+
 function onClick(block: BlockState) {
   if (block.flagged)
     return
@@ -116,24 +121,28 @@ function onClick(block: BlockState) {
   }
   block.revealed = true
   if (block.mine) {
-    // alert('BOOOOM')
-    return expendAll()
+    expendAll()
+    return
   }
   expendZero(block)
-}
-
-function getBlockClass(block: BlockState) {
-  if (block.flagged)
-    return 'bg-gray-500/10'
-  if (!block.revealed)
-    return 'bg-gray-500/10 hover:bg-gray/20'
-  return block.mine ? 'bg-red-500/50' : numberColors[block.adjacentMines]
 }
 
 function onRightClick(block: BlockState) {
   if (block.revealed)
     return
   block.flagged = !block.flagged
+}
+
+watchEffect(checkGameState)
+
+function checkGameState() {
+  const blocks = state.flat()
+  if (blocks.every(block => block.revealed || block.flagged)) {
+    if (blocks.some(block => (!block.mine && block.flagged) || (block.mine && block.revealed)))
+      alert('输了')
+    else
+      alert('赢了')
+  }
 }
 </script>
 
