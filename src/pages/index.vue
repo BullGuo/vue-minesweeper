@@ -2,19 +2,12 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2023-12-21 20:06:22
+ * @LastEditTime: 2023-12-21 20:21:26
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
 <script setup lang="ts" generic="T extends any, O extends any">
-interface BlockState {
-  x: number
-  y: number
-  revealed: boolean
-  mine?: boolean
-  flagged?: boolean
-  adjacentMines: number
-}
+import type { BlockState } from "~/types"
 
 const WIDTH = 10
 const HEIGHT = 10
