@@ -1,3 +1,11 @@
+/*
+ * @Description:
+ * @Author: jiangguo
+ * @Date: 2023-12-18 21:37:08
+ * @LastEditTime: 2023-12-29 20:15:14
+ * @LastEditors: jiangguo
+ * @FilePath: \vue-minesweeper\uno.config.ts
+ */
 import {
   defineConfig,
   presetAttributify,
@@ -26,4 +34,12 @@ export default defineConfig({
       },
     }),
   ],
+  content: {
+    pipeline: {
+      include: [
+        /\.(vue|[jt]sx|html)($|\?)/,
+        'src/**/*.{js,ts}',
+      ],
+    },
+  },
 })
