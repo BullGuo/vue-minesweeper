@@ -2,7 +2,7 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2024-01-04 21:41:22
+ * @LastEditTime: 2024-01-04 23:20:45
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
@@ -48,5 +48,6 @@ watchEffect(() => {
     <button btn @click="play.reset">
       RESET
     </button>
+    <Confetti :passed="play.gameState.value === 'won'" />
   </div>
 </template>
