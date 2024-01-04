@@ -2,7 +2,7 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2024-01-04 21:39:52
+ * @LastEditTime: 2024-01-04 21:41:22
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
@@ -12,6 +12,9 @@ const play = new GamePlay(10, 10, 10)
 const mineCount = computed(() => {
   return play.blocks.reduce((a, b) => a + (b.mine ? 1 : 0), 0)
 })
+
+const isDev = ref(false)
+const toggleDev = useToggle(isDev)
 
 watchEffect(() => {
   play.checkGameState()
@@ -29,7 +32,7 @@ watchEffect(() => {
           @contextmenu.prevent="play.onRightClick(block)"
         >
           <div v-if="block.flagged" i-mdi:flag-variant text-red />
-          <template v-else-if="block.revealed">
+          <template v-else-if="block.revealed || isDev">
             <div v-if="block.mine" i-mdi:mine />
             <div v-else font-bold>
               {{ block.adjacentMines }}
@@ -39,6 +42,9 @@ watchEffect(() => {
       </div>
     </div>
     <div>MineCount：{{ mineCount }}</div>
+    <button m-3 btn @click="toggleDev()">
+      {{ isDev ? 'DEV' : 'NORMAL' }}
+    </button>
     <button btn @click="play.reset">
       RESET
     </button>
