@@ -2,14 +2,16 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2023-12-26 22:51:06
+ * @LastEditTime: 2024-01-04 21:39:52
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
 <script setup lang="ts" generic="T extends any, O extends any">
-const play = new GamePlay(10, 10)
+const play = new GamePlay(10, 10, 10)
 
-const dev = false
+const mineCount = computed(() => {
+  return play.blocks.reduce((a, b) => a + (b.mine ? 1 : 0), 0)
+})
 
 watchEffect(() => {
   play.checkGameState()
@@ -27,15 +29,16 @@ watchEffect(() => {
           @contextmenu.prevent="play.onRightClick(block)"
         >
           <div v-if="block.flagged" i-mdi:flag-variant text-red />
-          <template v-else-if="block.revealed || dev">
+          <template v-else-if="block.revealed">
             <div v-if="block.mine" i-mdi:mine />
-            <div v-else>
+            <div v-else font-bold>
               {{ block.adjacentMines }}
             </div>
           </template>
         </button>
       </div>
     </div>
+    <div>MineCount：{{ mineCount }}</div>
     <button btn @click="play.reset">
       RESET
     </button>
