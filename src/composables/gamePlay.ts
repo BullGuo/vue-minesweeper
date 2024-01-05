@@ -55,7 +55,7 @@ export class GamePlay {
     const placeRandom = () => {
       const x = this.randomInt(0, this.width - 1)
       const y = this.randomInt(0, this.height - 1)
-      const block = this.state.value[x][y]
+      const block = this.state.value[y][x]
       if (Math.abs(initial.x - block.x) <= 1 && Math.abs(initial.y - block.y) <= 1)
         return false
       if (block.mine)
