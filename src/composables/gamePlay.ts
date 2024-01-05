@@ -35,7 +35,10 @@ export class GamePlay {
     return this.state.value.flat()
   }
 
-  reset() {
+  reset(width = this.width, height = this.height, mines = this.mines) {
+    this.width = width
+    this.height = height
+    this.mines = mines
     this.gameState.value = 'play'
     this.mineGenerated = false
     this.state.value = Array.from({ length: this.height }, (_, y) =>
