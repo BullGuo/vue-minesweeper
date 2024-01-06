@@ -2,7 +2,7 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2024-01-06 18:13:00
+ * @LastEditTime: 2024-01-07 00:07:47
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
@@ -65,7 +65,7 @@ function newGame(difficulty: 'easy' | 'medium' | 'hard') {
           {{ mineCount }}
         </div>
       </div>
-      <div p5>
+      <div ma w-max p5 @contextmenu.prevent>
         <div v-for="row, y in play.state.value" :key="y" flex="~" items-center justify-center>
           <button
             v-for="block, x in row" :key="x" h-10 w-10 m="0.5" flex="~" items-center justify-center
