@@ -108,6 +108,24 @@ export class GamePlay {
     this.blocks.forEach(block => block.revealed = true)
   }
 
+  autoExpand(block: BlockState) {
+    const siblings = this.getSiblings(block)
+    let flags = 0
+    let reveals = 0
+    siblings.forEach((item) => {
+      flags += (item.flagged ? 1 : 0)
+      reveals += (item.revealed ? 1 : 0)
+    })
+    if (flags + reveals === siblings.length)
+      return
+    if (flags === block.adjacentMines) {
+      siblings.forEach((item) => {
+        if (!item.revealed && !item.flagged)
+          item.revealed = true
+      })
+    }
+  }
+
   getSiblings(block: BlockState) {
     return directions.map(([x, y]) => {
       const x2 = block.x + x
@@ -145,6 +163,8 @@ export class GamePlay {
   onClick(block: BlockState) {
     if (block.flagged || this.gameState.value !== 'play')
       return
+    if (block.revealed)
+      return this.autoExpand(block)
     if (!this.mineGenerated.value) {
       this.generateMines(block)
       this.mineGenerated.value = true
