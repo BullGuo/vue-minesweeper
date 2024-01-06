@@ -93,18 +93,18 @@ export class GamePlay {
     })
   }
 
-  expendZero(block: BlockState) {
+  expandZero(block: BlockState) {
     if (block.adjacentMines)
       return
     this.getSiblings(block).forEach((s) => {
       if (!s.revealed) {
         s.revealed = true
-        this.expendZero(s)
+        this.expandZero(s)
       }
     })
   }
 
-  expendAll() {
+  expandAll() {
     this.blocks.forEach(block => block.revealed = true)
   }
 
@@ -146,10 +146,10 @@ export class GamePlay {
     }
     block.revealed = true
     if (block.mine) {
-      this.expendAll()
+      this.expandAll()
       return
     }
-    this.expendZero(block)
+    this.expandZero(block)
   }
 
   onRightClick(block: BlockState) {
