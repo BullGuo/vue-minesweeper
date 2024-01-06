@@ -6,3 +6,5 @@ export interface BlockState {
   flagged?: boolean
   adjacentMines: number
 }
+
+export type GameStatus = 'play' | 'won' | 'lost'

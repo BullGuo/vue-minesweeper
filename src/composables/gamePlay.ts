@@ -1,4 +1,4 @@
-import type { BlockState } from '~/types'
+import type { BlockState, GameStatus } from '~/types'
 
 const directions = [
   [1, 1],
@@ -25,7 +25,7 @@ const numberColors = [
 export class GamePlay {
   mineGenerated = ref(false)
   state = ref<BlockState[][]>([])
-  gameState = ref<'play' | 'won' | 'lost'>('play')
+  gameState = ref<GameStatus>('play')
   playTime = useInterval(1000, { controls: true, immediate: false })
 
   constructor(public width: number, public height: number, public mines: number) {
@@ -126,14 +126,20 @@ export class GamePlay {
     return block.mine ? 'bg-red-500/50' : numberColors[block.adjacentMines]
   }
 
+  onGameOver(status: GameStatus) {
+    this.gameState.value = status
+    this.playTime.pause()
+    this.expandAll()
+  }
+
   checkGameState() {
-    if (this.blocks.every(block => block.revealed || block.flagged)) {
-      if (this.blocks.some(block => (!block.mine && block.flagged) || (block.mine && block.revealed)))
-        this.gameState.value = 'lost'
-      else
-        this.gameState.value = 'won'
-      this.playTime.pause()
-    }
+    if (!this.mineGenerated.value)
+      return
+    if (this.blocks.every(block => (block.mine && block.flagged) || (!block.mine && block.revealed)))
+      this.onGameOver('won')
+
+    else if (this.blocks.some(block => (block.mine && block.revealed)))
+      this.onGameOver('lost')
   }
 
   onClick(block: BlockState) {
@@ -145,10 +151,8 @@ export class GamePlay {
       this.playTime.resume()
     }
     block.revealed = true
-    if (block.mine) {
-      this.expandAll()
+    if (block.mine)
       return
-    }
     this.expandZero(block)
   }
 
