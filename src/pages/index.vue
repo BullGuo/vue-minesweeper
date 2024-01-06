@@ -2,7 +2,7 @@
  * @Description:
  * @Author: jiangguo
  * @Date: 2023-12-18 21:37:08
- * @LastEditTime: 2024-01-05 21:24:31
+ * @LastEditTime: 2024-01-06 18:13:00
  * @LastEditors: jiangguo
  * @FilePath: \vue-minesweeper\src\pages\index.vue
 -->
@@ -10,7 +10,9 @@
 const play = new GamePlay(9, 9, 10)
 
 const mineCount = computed(() => {
-  return play.blocks.reduce((a, b) => a + (b.mine ? 1 : 0), 0)
+  if (!play.mineGenerated.value && play.state.value)
+    return play.mines
+  return play.blocks.reduce((a, b) => a + (b.mine ? 1 : 0) - (b.flagged ? 1 : 0), 0)
 })
 
 const isDev = ref(false)
@@ -38,8 +40,8 @@ function newGame(difficulty: 'easy' | 'medium' | 'hard') {
 <template>
   <div>
     Minesweeper
-    <div p5>
-      <div flex="~ gap1" justify-center p5>
+    <div>
+      <div flex="~ gap1" m5 justify-center>
         <button btn @click="play.reset()">
           New Game
         </button>
@@ -53,23 +55,34 @@ function newGame(difficulty: 'easy' | 'medium' | 'hard') {
           Hard
         </button>
       </div>
-      <div v-for="row, y in play.state.value" :key="y" flex="~" items-center justify-center>
-        <button
-          v-for="block, x in row" :key="x" h-10 w-10 m="0.5" flex="~" items-center justify-center
-          border="~ gray-400/10" :class="play.getBlockClass(block)" @click="play.onClick(block)"
-          @contextmenu.prevent="play.onRightClick(block)"
-        >
-          <div v-if="block.flagged" i-mdi:flag-variant text-red />
-          <template v-else-if="block.revealed || isDev">
-            <div v-if="block.mine" i-mdi:mine />
-            <div v-else font-bold>
-              {{ block.adjacentMines }}
-            </div>
-          </template>
-        </button>
+      <div flex="~ gap2" justify-center>
+        <div flex="~ gap1" items-center text-xl>
+          <div i-mdi:timer-outline />
+          <div>{{ play.playTime.counter }}</div>
+        </div>
+        <div flex="~ gap1" items-center text-xl>
+          <div i-mdi:mine />
+          {{ mineCount }}
+        </div>
+      </div>
+      <div p5>
+        <div v-for="row, y in play.state.value" :key="y" flex="~" items-center justify-center>
+          <button
+            v-for="block, x in row" :key="x" h-10 w-10 m="0.5" flex="~" items-center justify-center
+            border="~ gray-400/10" :class="play.getBlockClass(block)" @click="play.onClick(block)"
+            @contextmenu.prevent="play.onRightClick(block)"
+          >
+            <div v-if="block.flagged" i-mdi:flag-variant text-red />
+            <template v-else-if="block.revealed || isDev">
+              <div v-if="block.mine" i-mdi:mine />
+              <div v-else font-bold>
+                {{ block.adjacentMines }}
+              </div>
+            </template>
+          </button>
+        </div>
       </div>
     </div>
-    <div>MineCount：{{ mineCount }}</div>
     <button m-3 btn @click="toggleDev()">
       {{ isDev ? 'DEV' : 'NORMAL' }}
     </button>

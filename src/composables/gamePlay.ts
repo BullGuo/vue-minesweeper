@@ -23,9 +23,10 @@ const numberColors = [
 ]
 
 export class GamePlay {
-  mineGenerated = false
+  mineGenerated = ref(false)
   state = ref<BlockState[][]>([])
   gameState = ref<'play' | 'won' | 'lost'>('play')
+  playTime = useInterval(1000, { controls: true, immediate: false })
 
   constructor(public width: number, public height: number, public mines: number) {
     this.reset()
@@ -40,7 +41,11 @@ export class GamePlay {
     this.height = height
     this.mines = mines
     this.gameState.value = 'play'
-    this.mineGenerated = false
+    this.mineGenerated.value = false
+    if (this.playTime.isActive) {
+      this.playTime.reset()
+      this.playTime.pause()
+    }
     this.state.value = Array.from({ length: this.height }, (_, y) =>
       Array.from({ length: this.width }, (_, x): BlockState => ({
         x,
@@ -127,15 +132,17 @@ export class GamePlay {
         this.gameState.value = 'lost'
       else
         this.gameState.value = 'won'
+      this.playTime.pause()
     }
   }
 
   onClick(block: BlockState) {
     if (block.flagged || this.gameState.value !== 'play')
       return
-    if (!this.mineGenerated) {
+    if (!this.mineGenerated.value) {
       this.generateMines(block)
-      this.mineGenerated = true
+      this.mineGenerated.value = true
+      this.playTime.resume()
     }
     block.revealed = true
     if (block.mine) {
